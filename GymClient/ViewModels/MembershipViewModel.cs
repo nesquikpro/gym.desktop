@@ -419,6 +419,8 @@ namespace GymClient.ViewModels
                 );
             }
 
+            OnPropertyChanged(nameof(HasData));
+            OnPropertyChanged(nameof(HasNoData));
             OnPropertyChanged(nameof(MembershipSource));
         }
     }

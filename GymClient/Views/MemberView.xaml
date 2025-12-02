@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <converters:UtcToLocalConverter x:Key="UtcToLocalConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -75,7 +76,8 @@
             ItemsSource="{Binding MembersSource}"
             SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
             SelectionMode="Single"
-            SelectionUnit="FullRow">
+            SelectionUnit="FullRow"
+            Visibility="{Binding HasData, Converter={StaticResource BoolToVisibilityConverter}}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn
@@ -136,5 +138,16 @@
                 </Style>
             </DataGrid.CellStyle>
         </DataGrid>
+
+        <!--  No data  -->
+        <TextBlock
+            Grid.RowSpan="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="66"
+            FontWeight="SemiBold"
+            Foreground="Gray"
+            Text="Нет данных"
+            Visibility="{Binding HasData, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}" />
     </Grid>
 </UserControl>

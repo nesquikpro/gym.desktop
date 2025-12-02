@@ -3,6 +3,7 @@ using GymClient.Models;
 using GymClient.Services;
 using GymClient.Utils;
 using GymClient.Views;
+using Org.BouncyCastle.Asn1.Pkcs;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -12,6 +13,10 @@ namespace GymClient.ViewModels
     {
         public readonly IDialogService _dialogService;
         private readonly ApiClient _apiClient;
+        public bool HasActiveData => ActiveChips != null && ActiveChips.Count > 0;
+        public bool HasInactiveData => InactiveChips != null && InactiveChips.Count > 0;
+        public bool HasNoActiveData => !HasActiveData;
+        public bool HasNoInactiveData => !HasInactiveData;
         public ICommand AddChipCommand { get; }
         public ICommand OpenAddChipViewCommand { get; }
         public ICommand DeleteChipCommand { get; }
@@ -230,6 +235,10 @@ namespace GymClient.ViewModels
             }
 
             RefreshDataGrids(activeChips.Data, inactiveChips.Data, membersResult.Data);
+            OnPropertyChanged(nameof(HasActiveData));
+            OnPropertyChanged(nameof(HasInactiveData));
+            OnPropertyChanged(nameof(HasNoActiveData));
+            OnPropertyChanged(nameof(HasNoInactiveData));
         }
 
         private void RefreshObservableCollection<T>(ObservableCollection<T> target, List<T> source)

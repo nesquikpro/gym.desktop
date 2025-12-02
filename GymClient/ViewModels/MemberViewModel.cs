@@ -10,6 +10,10 @@ namespace GymClient.ViewModels
 {
     public class MemberViewModel : BaseViewModel
     {
+
+        public bool HasData => MembersSource != null && MembersSource.Count > 0;
+        public bool HasNoData => !HasData;
+
         private static readonly Random _random = new();
         public ICommand AddMemberCommand { get; }
         public ICommand OpenMemberViewCommand { get; }
@@ -167,6 +171,9 @@ namespace GymClient.ViewModels
             MembersSource.Clear();
             foreach (var m in filtered)
                 MembersSource.Add(m);
+
+            OnPropertyChanged(nameof(HasData));
+            OnPropertyChanged(nameof(HasNoData));
         }
 
         private async Task DeleteMember()
