@@ -1,0 +1,36 @@
+﻿<Window
+    x:Class="GymClient.Views.AddVisitView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:GymClient.ViewModels"
+    Width="250"
+    Height="200"
+    ResizeMode="NoResize"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="20" VerticalAlignment="Top">
+        <ComboBox
+            Margin="0,6,0,10"
+            materialDesign:HintAssist.Hint="Клиент"
+            DisplayMemberPath="MemberFullName"
+            ItemsSource="{Binding ActiveMembers}"
+            SelectedItem="{Binding SelectedMember, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+        <StackPanel
+            Margin="0,30,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Click="SaveBtn_Click"
+                Command="{Binding AddVisitCommand}"
+                Content="+"
+                IsEnabled="{Binding CanSave}"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                ToolTip="Добавить визит" />
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,65 @@
+﻿<Window
+    x:Class="GymClient.Views.AddChipView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:GymClient.Utils"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:GymClient.ViewModels"
+    Width="250"
+    Height="220"
+    ResizeMode="NoResize"
+    Style="{StaticResource MaterialDesignWindow}"
+    WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+
+    <StackPanel Margin="20" VerticalAlignment="Top">
+        <ComboBox
+            Margin="0,6,0,10"
+            materialDesign:HintAssist.Hint="Клиент"
+            DisplayMemberPath="FullName"
+            ItemsSource="{Binding Members}"
+            SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
+            SelectedValuePath="MemberId"
+            Visibility="{Binding IsActiveMembersVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        <TextBlock
+            Margin="0,6,0,0"
+            FontSize="16"
+            FontWeight="Bold"
+            Text="{Binding EditableMember}"
+            Visibility="{Binding IsActiveMembersVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}" />
+
+        <CheckBox
+            Margin="0,6,0,10"
+            Content="Активен"
+            IsChecked="{Binding IsActive, Mode=TwoWay}" />
+
+        <StackPanel
+            Margin="0,10,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Width="110"
+                Click="SaveBtn_Click"
+                Content="Сохранить"
+                IsEnabled="{Binding CanSave}"
+                ToolTip="Сохранить">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                        <Setter Property="Command" Value="{Binding AddChipCommand}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Command" Value="{Binding EditChip}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>
