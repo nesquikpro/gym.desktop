@@ -81,13 +81,13 @@
 
                 <DataGridTextColumn
                     Width="auto"
-                    Binding="{Binding StartDate, StringFormat={}{0:dd.MM.yyyy}}"
+                    Binding="{Binding StartDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Начало абонемента"
                     SortMemberPath="StartDateTime" />
 
                 <DataGridTextColumn
                     Width="auto"
-                    Binding="{Binding EndDate, StringFormat={}{0:dd.MM.yyyy}}"
+                    Binding="{Binding EndDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Конец абонемента"
                     SortMemberPath="EndDateTime" />
 
@@ -98,7 +98,7 @@
 
                 <DataGridTextColumn
                     Width="auto"
-                    Binding="{Binding FreezePeriod}"
+                    Binding="{Binding FreezePeriod, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Период заморозки" />
 
                 <DataGridTemplateColumn Width="*">

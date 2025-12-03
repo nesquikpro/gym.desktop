@@ -45,20 +45,12 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBox
+        <DatePicker
             x:Name="DateOfBirthBox"
             Margin="0,6,0,10"
             materialDesign:HintAssist.Hint="Дата рождения"
-            MaxLength="10"
-            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-            <TextBox.Text>
-                <Binding Path="DateOfBirth" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <local:RequiredRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+            PreviewTextInput="DatePicker_PreviewTextInput"
+            Style="{StaticResource MaterialDesignDatePicker}" />
 
         <TextBox
             x:Name="EmailBox"

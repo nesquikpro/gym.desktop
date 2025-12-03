@@ -5,6 +5,29 @@ namespace GymClient.Utils
 {
     public class UtcToLocalConverter : IValueConverter
     {
+        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    if (value is DateTime dt)
+        //    {
+        //        DateTime localTime = dt.Kind switch
+        //        {
+        //            DateTimeKind.Utc => TimeZoneInfo.ConvertTimeFromUtc(dt, TimeZoneInfo.Local),
+        //            DateTimeKind.Local => dt,
+        //            _ => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(dt, DateTimeKind.Utc), TimeZoneInfo.Local)
+        //        };
+
+        //        // Форматируем для России
+        //        var russianCulture = new CultureInfo("ru-RU");
+        //        return localTime.ToString("dd.MM.yyyy HH:mm", russianCulture);
+        //    }
+        //    else if (value is DateOnly dateOnly)
+        //    {
+        //        return dateOnly.ToString("dd.MM.yyyy", new CultureInfo("ru-RU"));
+        //    }
+
+        //    return System.Windows.Data.Binding.DoNothing;
+        //}
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is DateTime dt)
@@ -18,18 +41,20 @@ namespace GymClient.Utils
                         break;
 
                     case DateTimeKind.Local:
-                        // Уже локальное время, конвертировать не нужно
                         return dt;
 
                     case DateTimeKind.Unspecified:
                     default:
-                        // Считаем, что сервер прислал UTC
                         utcTime = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
                         break;
                 }
 
-                // Конвертируем UTC в локальную Windows-зону
                 return TimeZoneInfo.ConvertTimeFromUtc(utcTime, TimeZoneInfo.Local);
+            }
+            else if (value is DateOnly dateOnly)
+            {
+                var dateTime = dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Local);
+                return dateTime;
             }
 
             return System.Windows.Data.Binding.DoNothing;

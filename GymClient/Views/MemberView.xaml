@@ -94,7 +94,7 @@
                     Header="Фамилия" />
                 <DataGridTextColumn
                     Width="auto"
-                    Binding="{Binding DateOfBirth}"
+                    Binding="{Binding DateOfBirth, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Дата рождения" />
                 <DataGridTextColumn
                     Width="auto"
@@ -106,7 +106,7 @@
                     Header="Телефон" />
                 <DataGridTextColumn
                     Width="auto"
-                    Binding="{Binding RegistrationDate, Converter={StaticResource UtcToLocalConverter}}"
+                    Binding="{Binding RegistrationDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
                     Header="Дата регистрации" />
 
                 <DataGridTemplateColumn Width="*">

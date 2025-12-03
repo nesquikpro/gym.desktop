@@ -171,18 +171,18 @@
                             Visibility="{Binding HasInactiveData, Converter={StaticResource BoolToVisibilityConverter}}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn
-                                    Width="*"
+                                    Width="auto"
                                     Binding="{Binding Id}"
                                     Header="ID" />
                                 <DataGridTextColumn
-                                    Width="*"
+                                    Width="auto"
                                     Binding="{Binding MemberFullName}"
                                     Header="Клиент" />
                                 <DataGridTextColumn
-                                    Width="*"
+                                    Width="auto"
                                     Binding="{Binding ChipNumber}"
                                     Header="Номер чипа" />
-                                <DataGridTemplateColumn Width="150" Header="Действия">
+                                <DataGridTemplateColumn Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">

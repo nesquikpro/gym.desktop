@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 namespace GymClient.Views
 {
     /// <summary>
@@ -12,22 +11,8 @@ namespace GymClient.Views
             InitializeComponent();
         }
 
-        private void DateOfBirth_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void DatePicker_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            var textBox = sender as System.Windows.Controls.TextBox;
-            if (textBox == null) return;
-
-            string currentText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
-            currentText = currentText.Insert(textBox.CaretIndex, e.Text);
-
-            string numbers = new(currentText.Where(char.IsDigit).ToArray());
-
-            if (numbers.Length > 2) numbers = numbers.Insert(2, "/");
-            if (numbers.Length > 5) numbers = numbers.Insert(5, "/");
-            if (numbers.Length > 10) numbers = numbers.Substring(0, 10);
-
-            textBox.Text = numbers;
-            textBox.CaretIndex = textBox.Text.Length;
             e.Handled = true;
         }
 

@@ -30,7 +30,8 @@
         <DatePicker
             x:Name="StartDate"
             Margin="0,6,0,10"
-            materialDesign:HintAssist.Hint="Дата начала абонемента">
+            materialDesign:HintAssist.Hint="Дата начала абонемента"
+            PreviewTextInput="DatePicker_PreviewTextInput">
             <DatePicker.SelectedDate>
                 <Binding
                     Mode="TwoWay"
@@ -46,7 +47,8 @@
         <DatePicker
             x:Name="EndDate"
             Margin="0,6,0,10"
-            materialDesign:HintAssist.Hint="Дата конца абонемента">
+            materialDesign:HintAssist.Hint="Дата конца абонемента"
+            PreviewTextInput="DatePicker_PreviewTextInput">
             <DatePicker.SelectedDate>
                 <Binding
                     Mode="TwoWay"

@@ -47,6 +47,7 @@
 
                 <!--  Period  -->
                 <ComboBox
+                    x:Name="SelectedPeriodComboBox"
                     Grid.Column="1"
                     Margin="12,0,0,0"
                     materialDesign:HintAssist.Hint="Период"
@@ -64,9 +65,11 @@
                     Orientation="Horizontal">
 
                     <DatePicker
+                        x:Name="StartDatePicker"
                         Width="150"
                         Margin="12,0"
                         materialDesign:HintAssist.Hint="Начало"
+                        PreviewTextInput="DatePicker_PreviewTextInput"
                         SelectedDate="{Binding StartDate}" />
 
                     <Button
@@ -77,9 +80,11 @@
                     </Button>
 
                     <DatePicker
+                        x:Name="EndDatePicker"
                         Width="150"
                         Margin="12,0"
                         materialDesign:HintAssist.Hint="Конец"
+                        PreviewTextInput="DatePicker_PreviewTextInput"
                         SelectedDate="{Binding EndDate}" />
 
                     <Button
@@ -178,10 +183,12 @@
             CornerRadius="8"
             Visibility="{Binding HasData, Converter={StaticResource BoolToVisibilityConverter}}">
             <lvc:CartesianChart
+                x:Name="VisitsChart"
                 Background="{DynamicResource MaterialDesignPaper}"
                 LegendPosition="Right"
                 LegendTextPaint="{Binding LegendTextPaint}"
                 Series="{Binding ChartSeries}"
+                Unloaded="CartesianChart_Unloaded"
                 XAxes="{Binding ChartXAxes}"
                 YAxes="{Binding ChartYAxes}" />
         </Border>

@@ -4,10 +4,8 @@ using GymClient.Services;
 using GymClient.Utils;
 using GymClient.Views;
 using LiveChartsCore;
-using LiveChartsCore.Painting;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using PdfSharpCore.Pdf.Filters;
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -19,41 +17,13 @@ namespace GymClient.ViewModels
         private readonly IDialogService _dialogService;
         private readonly ApiClient _apiClient;
         private readonly IExportService _visitExportService;
-
-        private ISeries[] _chartSeries;
-        public ISeries[] ChartSeries
-        {
-            get => _chartSeries;
-            set => SetProperty(ref _chartSeries, value);
-        }
-        private Axis[] _chartXAxes;
-        public Axis[] ChartXAxes
-        {
-            get => _chartXAxes;
-            set => SetProperty(ref _chartXAxes, value);
-        }
-        private Axis[] _chartYAxes;
-        public Axis[] ChartYAxes
-        {
-            get => _chartYAxes;
-            set => SetProperty(ref _chartYAxes, value);
-        }
-
-        private Paint? _legendTextPaint;
-        public Paint? LegendTextPaint
-        {
-            get => _legendTextPaint;
-            set
-            {
-                _legendTextPaint = value;
-                OnPropertyChanged(nameof(LegendTextPaint));
-            }
-        }
-
+        public ISeries[] ChartSeries { get; private set; }
+        public Axis[] ChartXAxes { get; private set; }
+        public Axis[] ChartYAxes { get; private set; }
+        public SolidColorPaint LegendTextPaint { get; private set; }
         public bool CanSave => SelectedMember != null;
         public bool HasData => FilteredVisits != null && FilteredVisits.Count > 0;
         public bool HasNoData => !HasData;
-
         private Chip? _selectedMember;
         public Chip? SelectedMember
         {
@@ -65,7 +35,6 @@ namespace GymClient.ViewModels
                 OnPropertyChanged(nameof(CanSave));
             }
         }
-
         private VisitDto? _selectedVisit;
         public VisitDto? SelectedVisit
         {
@@ -76,7 +45,6 @@ namespace GymClient.ViewModels
                 OnPropertyChanged(nameof(SelectedVisit));
             }
         }
-
         public ObservableCollection<Chip> ActiveMembers { get; set; } = new();
         public ObservableCollection<VisitDto> Visits { get; set; } = new();
         private ObservableCollection<VisitDto> _filteredVisits = new();
@@ -89,7 +57,6 @@ namespace GymClient.ViewModels
                 OnPropertyChanged(nameof(FilteredVisits));
             }
         }
-
         private string _selectedPeriodFilter = "Все";
         public string SelectedPeriodFilter
         {
@@ -102,7 +69,6 @@ namespace GymClient.ViewModels
                 ApplyFilters();
             }
         }
-
         private string? _searchText;
         public string? SearchText
         {
@@ -115,10 +81,8 @@ namespace GymClient.ViewModels
                 ApplyFilters();
             }
         }
-
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-
         public ICommand ApplyFiltersCommand => new RelayCommand(ApplyFilters);
         public ICommand ExportToPdfCommand => new RelayCommand(ExportToPdf);
         public ICommand ExportToExcelCommand => new RelayCommand(ExportToExcel);
@@ -134,6 +98,42 @@ namespace GymClient.ViewModels
 
             Visits.CollectionChanged += (s, e) => ApplyFilters();
             InitializeAsync();
+            InitializeChart();
+        }
+
+        private void InitializeChart()
+        {
+            var colorPaint = new SolidColorPaint(SKColor.Parse("03A9F4"));
+
+            ChartSeries = new ISeries[]
+            {
+                new ColumnSeries<int>
+                {
+                    Values = new ObservableCollection<int>(),
+                    Name = "Посещения"
+                }
+            };
+
+            ChartXAxes = new Axis[]
+            {
+                new Axis
+                {
+                    Labels = new List<string>(),
+                    LabelsPaint = colorPaint
+                }
+            };
+
+            ChartYAxes = new Axis[]
+            {
+                new Axis
+                {
+                    MinStep = 1,
+                    Labeler = value => value.ToString("0"),
+                    LabelsPaint = colorPaint
+                }
+            };
+
+            LegendTextPaint = colorPaint;
         }
 
         public async void InitializeAsync()
@@ -182,65 +182,32 @@ namespace GymClient.ViewModels
             }
 
             FilteredVisits = new ObservableCollection<VisitDto>(filtered);
-
             OnPropertyChanged(nameof(HasData));
             OnPropertyChanged(nameof(HasNoData));
-
             UpdateChart();
         }
+
         private void UpdateChart()
         {
-            SolidColorPaint colorPaint = new(SKColor.Parse("03A9F4"));
+            if (ChartSeries == null || ChartSeries.Length == 0) return;
+
+            var columnSeries = ChartSeries[0] as ColumnSeries<int>;
+            var xAxis = ChartXAxes[0];
 
             if (FilteredVisits.Count == 0)
             {
-                ChartSeries = Array.Empty<ISeries>();
-                ChartXAxes = Array.Empty<Axis>();
-                ChartYAxes = Array.Empty<Axis>();
-            }
-            else
-            {
-                var grouped = FilteredVisits
-                    .GroupBy(v => v.VisitDateTime.Date)
-                    .OrderBy(g => g.Key)
-                    .ToDictionary(g => g.Key.ToString("dd.MM.yyyy"), g => g.Count());
-
-                ChartSeries =
-                [
-                    new ColumnSeries<int>
-                    {
-                        Values = grouped.Values.ToList(),
-                        Name = "Посещения",
-                    }
-                ];
-
-                ChartXAxes =
-                [
-                    new Axis
-                    {
-                        Labels = grouped.Keys.ToList(),
-                        LabelsPaint = colorPaint
-                    }
-                ];
-
-                ChartYAxes =
-                [
-                    new Axis
-                    {
-                        TicksPaint = null,
-                        SeparatorsPaint = null,
-                        LabelsPaint = colorPaint,
-                        MinStep = 1,
-                        Labeler = value => value.ToString("0")
-                    }
-                ];
+                columnSeries.Values = Array.Empty<int>();
+                xAxis.Labels = Array.Empty<string>();
+                return;
             }
 
-            LegendTextPaint = colorPaint;
+            var grouped = FilteredVisits
+                .GroupBy(v => v.VisitDateTime.Date)
+                .OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key.ToString("dd.MM.yyyy"), g => g.Count());
 
-            OnPropertyChanged(nameof(ChartSeries));
-            OnPropertyChanged(nameof(ChartXAxes));
-            OnPropertyChanged(nameof(ChartYAxes));
+            columnSeries.Values = grouped.Values.ToArray();
+            xAxis.Labels = grouped.Keys.ToArray();
         }
 
         private async Task LoadVisits()
