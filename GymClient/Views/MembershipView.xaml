@@ -70,34 +70,34 @@
             Visibility="{Binding HasData, Converter={StaticResource BoolToVisibilityConverter}}">
             <DataGrid.Columns>
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding Id}"
                     Header="ID" />
 
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding MemberFullName}"
                     Header="Клиент" />
 
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding StartDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Начало абонемента"
                     SortMemberPath="StartDateTime" />
 
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding EndDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Конец абонемента"
                     SortMemberPath="EndDateTime" />
 
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding IsFrozen, Converter={StaticResource BoolToYesNoConverter}}"
                     Header="Заморожен" />
 
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding FreezePeriod, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Период заморозки" />
 

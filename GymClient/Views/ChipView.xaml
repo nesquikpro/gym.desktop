@@ -45,23 +45,21 @@
         </Grid>
 
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Vertical">
+            <StackPanel Orientation="Vertical">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <!--  Active Chips  -->
-                    <StackPanel Grid.Row="0" Margin="5,5,5,5">
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="5,5,5,5"
+                        Orientation="Vertical">
                         <TextBlock
                             Margin="0,0,0,4"
                             HorizontalAlignment="Center"
@@ -88,15 +86,15 @@
                             Visibility="{Binding HasActiveData, Converter={StaticResource BoolToVisibilityConverter}}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding Id}"
                                     Header="ID" />
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding MemberFullName}"
                                     Header="Клиент" />
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding ChipNumber}"
                                     Header="Номер чипа" />
                                 <DataGridTemplateColumn Width="*">
@@ -136,17 +134,10 @@
                             Foreground="Gray"
                             Text="Нет данных"
                             Visibility="{Binding HasActiveData, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}" />
-                    </StackPanel>
 
-                    <Separator
-                        Grid.Row="1"
-                        Margin="40"
-                        BorderThickness="1" />
-
-                    <!--  Inactive Chips  -->
-                    <StackPanel Grid.Row="2" Margin="5,5,5,5">
+                        <!--  Inactive Chips  -->
                         <TextBlock
-                            Margin="0,0,0,4"
+                            Margin="0,40,0,4"
                             HorizontalAlignment="Center"
                             FontSize="22"
                             FontWeight="Bold"
@@ -171,15 +162,15 @@
                             Visibility="{Binding HasInactiveData, Converter={StaticResource BoolToVisibilityConverter}}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding Id}"
                                     Header="ID" />
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding MemberFullName}"
                                     Header="Клиент" />
                                 <DataGridTextColumn
-                                    Width="auto"
+                                    Width="*"
                                     Binding="{Binding ChipNumber}"
                                     Header="Номер чипа" />
                                 <DataGridTemplateColumn Width="*">
@@ -203,7 +194,6 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
-
                             <DataGrid.CellStyle>
                                 <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
                                     <Setter Property="BorderThickness" Value="0" />

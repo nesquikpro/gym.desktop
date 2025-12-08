@@ -136,19 +136,19 @@
 
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="auto"
+                        Width="*"
                         Binding="{Binding Id}"
                         Header="ID" />
                     <DataGridTextColumn
-                        Width="auto"
+                        Width="*"
                         Binding="{Binding MemberFullName}"
                         Header="ФИО" />
                     <DataGridTextColumn
-                        Width="auto"
+                        Width="*"
                         Binding="{Binding ChipNumber}"
                         Header="Чип" />
                     <DataGridTextColumn
-                        Width="auto"
+                        Width="*"
                         Binding="{Binding VisitDateTime, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
                         Header="Дата" />
                     <DataGridTemplateColumn Width="*">

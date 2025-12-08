@@ -11,10 +11,10 @@
 
     <StackPanel Margin="20" VerticalAlignment="Top">
         <TextBlock Text="Дата начала заморозки:" />
-        <DatePicker SelectedDate="{Binding FreezeStartDateTime}" />
+        <DatePicker PreviewTextInput="DatePicker_PreviewTextInput" SelectedDate="{Binding FreezeStartDateTime}" />
 
         <TextBlock Margin="0,10,0,0" Text="Дата конца заморозки:" />
-        <DatePicker SelectedDate="{Binding FreezeEndDateTime}" />
+        <DatePicker PreviewTextInput="DatePicker_PreviewTextInput" SelectedDate="{Binding FreezeEndDateTime}" />
         <StackPanel
             Margin="0,30,0,0"
             HorizontalAlignment="Right"

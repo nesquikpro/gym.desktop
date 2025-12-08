@@ -81,31 +81,31 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding Id}"
                     Header="ID" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding FirstName}"
                     Header="Имя" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding LastName}"
                     Header="Фамилия" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding DateOfBirth, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
                     Header="Дата рождения" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding Email}"
                     Header="Почта" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding PhoneNumber}"
                     Header="Телефон" />
                 <DataGridTextColumn
-                    Width="auto"
+                    Width="*"
                     Binding="{Binding RegistrationDate, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
                     Header="Дата регистрации" />
 

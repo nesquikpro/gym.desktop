@@ -17,5 +17,10 @@ namespace GymClient.Views
             DialogResult = true;
             Close();
         }
+
+        private void DatePicker_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }
