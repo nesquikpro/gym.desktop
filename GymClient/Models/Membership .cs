@@ -18,6 +18,15 @@ namespace GymClient.Models
         public int TotalFrozenDays { get; set; }
 
         [JsonIgnore]
+        public DateTime StartDateTime => StartDate.HasValue ? StartDate.Value.ToDateTime(new TimeOnly(0, 0)) : DateTime.MinValue;
+
+        [JsonIgnore]
+        public DateTime EndDateTime => EndDate.HasValue ? EndDate.Value.ToDateTime(new TimeOnly(0, 0)) : DateTime.MinValue;
+
+        [JsonIgnore]
+        public DateTime FreezeStartDateTimeSortable => FreezeStartDate.HasValue ? FreezeStartDate.Value.ToDateTime(new TimeOnly(0, 0)) : DateTime.MinValue;
+
+        [JsonIgnore]
         public DateTime? FreezeStartDateTime
         {
             get => FreezeStartDate.HasValue ? FreezeStartDate.Value.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null;

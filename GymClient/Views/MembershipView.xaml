@@ -99,7 +99,8 @@
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding FreezePeriod, Converter={StaticResource UtcToLocalConverter}, StringFormat={}{0:dd.MM.yyyy}}"
-                    Header="Период заморозки" />
+                    Header="Период заморозки"
+                    SortMemberPath="FreezeStartDateTimeSortable" />
 
                 <DataGridTemplateColumn Width="*">
                     <DataGridTemplateColumn.CellTemplate>
