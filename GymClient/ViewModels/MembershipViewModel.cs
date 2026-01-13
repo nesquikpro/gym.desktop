@@ -332,6 +332,18 @@ namespace GymClient.ViewModels
                 return;
             }
 
+            if (!_endDate.HasValue)
+            {
+                await _dialogService.ShowMessage("Укажите дату окончания абонемента!");
+                return;
+            }
+
+            if (_endDate < _startDate)
+            {
+                await _dialogService.ShowMessage("Дата окончания не может быть раньше даты начала!");
+                return;
+            }
+
             var today = DateOnly.FromDateTime(DateTime.Today);
             var hasActiveMembership = _allMemberships.Any(m =>
                 m.MemberId == SelectedMember.Id &&
