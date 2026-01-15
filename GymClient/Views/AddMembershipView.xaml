@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:GymClient.ViewModels"
     Width="300"
-    Height="300"
+    Height="335"
     ResizeMode="NoResize"
     Style="{StaticResource MaterialDesignWindow}"
     WindowStartupLocation="CenterOwner">
@@ -27,6 +27,7 @@
             ItemsSource="{Binding Members}"
             SelectedItem="{Binding SelectedMember, Mode=TwoWay}" />
 
+        <TextBlock Margin="0,0,0,0" Text="Дата начала абонемента:" />
         <DatePicker
             x:Name="StartDate"
             Margin="0,6,0,10"
@@ -44,10 +45,11 @@
             </DatePicker.SelectedDate>
         </DatePicker>
 
+        <TextBlock Margin="0,0,0,0" Text="Дата окончания абонемента:" />
         <DatePicker
             x:Name="EndDate"
             Margin="0,6,0,10"
-            materialDesign:HintAssist.Hint="Дата конца абонемента"
+            materialDesign:HintAssist.Hint="Дата окончания абонемента"
             PreviewTextInput="DatePicker_PreviewTextInput">
             <DatePicker.SelectedDate>
                 <Binding
