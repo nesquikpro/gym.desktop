@@ -6,7 +6,7 @@ namespace GymClient.ViewModels
 {
     public class AuthViewModel: BaseViewModel
     {
-        private string _username = "admin";
+        private string _username;
         public string Username
         {
             get => _username;
@@ -17,7 +17,7 @@ namespace GymClient.ViewModels
             }
         }
 
-        private string _password = "admin";
+        private string _password;
         public string Password
         {
             private get => _password;

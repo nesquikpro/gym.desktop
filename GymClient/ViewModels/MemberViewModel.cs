@@ -261,7 +261,6 @@ namespace GymClient.ViewModels
             var view = new Views.AddMemberView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
 
             RequestClose += () => view.Close();
@@ -283,7 +282,6 @@ namespace GymClient.ViewModels
             var view = new Views.AddMemberView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
 
             RequestClose += () => view.Close();

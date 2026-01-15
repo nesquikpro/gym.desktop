@@ -233,7 +233,6 @@ namespace GymClient.ViewModels
             var addVisitView = new AddVisitView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
             addVisitView.ShowDialog();
         }

@@ -11,7 +11,7 @@
     Height="220"
     ResizeMode="NoResize"
     Style="{StaticResource MaterialDesignWindow}"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />

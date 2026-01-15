@@ -9,7 +9,7 @@
     Height="380"
     ResizeMode="NoResize"
     Style="{StaticResource MaterialDesignWindow}"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <local:NoValidationErrorConverter x:Key="NoValidationErrorConverter" />

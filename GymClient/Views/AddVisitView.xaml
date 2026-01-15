@@ -10,7 +10,7 @@
     Height="200"
     ResizeMode="NoResize"
     Style="{StaticResource MaterialDesignWindow}"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterScreen">
 
     <StackPanel Margin="20" VerticalAlignment="Top">
         <ComboBox

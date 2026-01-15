@@ -139,7 +139,6 @@ namespace GymClient.ViewModels
             var addChipView = new AddChipView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
             addChipView.ShowDialog();
         }
@@ -155,7 +154,6 @@ namespace GymClient.ViewModels
             var editChipView = new AddChipView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
 
             if (editChipView.ShowDialog() == true)

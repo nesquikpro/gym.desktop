@@ -159,7 +159,6 @@ namespace GymClient.ViewModels
             var freezeWindow = new FreezeMembershipView
             {
                 DataContext = freezeCopy,
-                Owner = System.Windows.Application.Current.MainWindow
             };
 
             if (freezeWindow.ShowDialog() == true)
@@ -272,7 +271,6 @@ namespace GymClient.ViewModels
             var addMembershipWindow = new AddMembershipView
             {
                 DataContext = this,
-                Owner = System.Windows.Application.Current.MainWindow
             };
             addMembershipWindow.ShowDialog();
         }
