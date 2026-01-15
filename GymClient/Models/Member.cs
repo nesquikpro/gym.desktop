@@ -2,7 +2,7 @@
 
 namespace GymClient.Models
 {
-    public class Member : ModelAbstract, ICloneable
+    public class Member : ModelAbstract
     {
         [JsonProperty("memberId")]
         public override int Id { get; set; }
@@ -35,11 +35,6 @@ namespace GymClient.Models
                 Email = email,
                 RegistrationDate = DateTime.Now
             };
-        }
-
-        public object Clone()
-        {
-            return this.MemberwiseClone();
         }
     }
 }

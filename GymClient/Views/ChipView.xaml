@@ -39,7 +39,7 @@
                 VerticalAlignment="Center"
                 materialDesign:ButtonAssist.CornerRadius="20"
                 Command="{Binding OpenAddChipViewCommand}"
-                ToolTip="Добавить клиента">
+                ToolTip="Добавить чип доступа">
                 <materialDesign:PackIcon Kind="Add" />
             </Button>
         </Grid>

@@ -1,5 +1,4 @@
 ﻿using GymClient.Models;
-using GymClient.Utils;
 using System.Globalization;
 using System.IO;
 

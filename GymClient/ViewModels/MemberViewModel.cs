@@ -2,7 +2,6 @@
 using GymClient.Models;
 using GymClient.Services;
 using GymClient.Utils;
-using GymClient.Views;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -10,19 +9,34 @@ namespace GymClient.ViewModels
 {
     public class MemberViewModel : BaseViewModel
     {
+        private readonly ApiClient _apiClient;
+        private readonly IDialogService _dialogService;
+        private readonly CsvImportService _csvImportService;
 
-        public bool HasData => MembersSource != null && MembersSource.Count > 0;
-        public bool HasNoData => !HasData;
-
-        private static readonly Random _random = new();
-        public ICommand AddMemberCommand { get; }
+        #region Commands
+        public ICommand SaveCommand { get; }
         public ICommand OpenMemberViewCommand { get; }
         public ICommand EditMemberCommand { get; }
         public ICommand DeleteMemberCommand { get; }
         public ICommand ImportCsvCommand { get; }
-        public readonly IDialogService _dialogService;
-        private readonly ApiClient _apiClient;
-        private readonly CsvImportService _csvImportService;
+        #endregion
+
+        #region Collections
+        public ObservableCollection<Member> MembersSource { get; } = new();
+        private ObservableCollection<Member> _allMembers = new();
+        #endregion
+
+        #region Properties
+        public bool HasData => MembersSource.Any();
+        public bool HasNoData => !HasData;
+
+        private bool _isEditMode;
+        public bool IsEditMode
+        {
+            get => _isEditMode;
+            set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); OnPropertyChanged(nameof(IsValid)); }
+        }
+
         private Member? _selectedMember;
         public Member? SelectedMember
         {
@@ -31,99 +45,70 @@ namespace GymClient.ViewModels
             {
                 _selectedMember = value;
                 OnPropertyChanged(nameof(SelectedMember));
-            }
-        }
-        private string _firstName = "test";
-        public string FirstName
-        {
-            get => _firstName;
-            set
-            {
-                _firstName = value;
-                OnPropertyChanged(nameof(FirstName));
-            }
-        }
-        private string _lastName = "test";
-        public string LastName
-        {
-            get => _lastName;
-            set
-            {
-                _lastName = value;
-                OnPropertyChanged(nameof(LastName));
-            }
-        }
-        private DateOnly _dateOfBirth = new(1990, 12, 1);
-        public DateOnly DateOfBirth
-        {
-            get => _dateOfBirth;
-            set
-            {
-                _dateOfBirth = value;
-                OnPropertyChanged(nameof(DateOfBirth));
-            }
-        }
-        private string _email = "g@gmail.com";
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
-        }
-        private string _phoneNumber = "1" + string.Concat(Enumerable.Range(0, 10).Select(_ => _random.Next(0, 10)));
-        public string PhoneNumber
-        {
-            get => _phoneNumber;
-            set
-            {
-                _phoneNumber = value;
-                OnPropertyChanged(nameof(PhoneNumber));
-            }
-        }
-        private int _id = 0;
-        public int Id
-        {
-            get => _id;
-            set
-            {
-                if (_id != value)
-                {
-                    _id = value;
-                    OnPropertyChanged(nameof(Id));
-                }
+                if (_selectedMember != null && IsEditMode)
+                    LoadSelectedMember();
             }
         }
 
-        private string _searchText = string.Empty;
-        public string SearchText
+        private int _id;
+        public int Id
         {
-            get => _searchText;
-            set
-            {
-                if (_searchText != value)
-                {
-                    _searchText = value;
-                    OnPropertyChanged(nameof(SearchText));
-                    ApplyFilters();
-                }
-            }
+            get => _id;
+            set { _id = value; OnPropertyChanged(nameof(Id)); }
         }
-        private bool _isEditMode;
-        public bool IsEditMode
+
+        private string _firstName = string.Empty;
+        public string FirstName
         {
-            get => _isEditMode;
-            set
-            {
-                _isEditMode = value;
-                OnPropertyChanged(nameof(IsEditMode));
-            }
+            get => _firstName;
+            set { _firstName = value; OnPropertyChanged(nameof(FirstName)); OnPropertyChanged(nameof(IsValid)); }
         }
-        public ObservableCollection<Member> MembersSource { get; set; } = new();
-        public ObservableCollection<Member> FilteredMembers { get; set; } = new();
-        private ObservableCollection<Member> _allMembers = new();
+
+        private string _lastName = string.Empty;
+        public string LastName
+        {
+            get => _lastName;
+            set { _lastName = value; OnPropertyChanged(nameof(LastName)); OnPropertyChanged(nameof(IsValid)); }
+        }
+
+        private string _email = string.Empty;
+        public string Email
+        {
+            get => _email;
+            set { _email = value; OnPropertyChanged(nameof(Email)); OnPropertyChanged(nameof(IsValid)); }
+        }
+
+        private string _phoneNumber = string.Empty;
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set { _phoneNumber = value; OnPropertyChanged(nameof(PhoneNumber)); OnPropertyChanged(nameof(IsValid)); }
+        }
+
+        private DateTime? _dateOfBirth;
+        public DateTime? DateOfBirth
+        {
+            get => _dateOfBirth;
+            set { _dateOfBirth = value; OnPropertyChanged(nameof(DateOfBirth)); OnPropertyChanged(nameof(IsValid)); }
+        }
+
+        /// <summary>
+        /// Проверка валидации всех полей
+        /// </summary>
+        public bool IsValid =>
+            !string.IsNullOrWhiteSpace(FirstName) &&
+            !string.IsNullOrWhiteSpace(LastName) &&
+            !string.IsNullOrWhiteSpace(Email) &&
+            !string.IsNullOrWhiteSpace(PhoneNumber) &&
+            DateOfBirth.HasValue;
+        #endregion
+
+        #region Events
+        /// <summary>
+        /// Событие для закрытия окна
+        /// </summary>
+        public event Action? RequestClose;
+        #endregion
 
         public MemberViewModel(ApiClient apiClient, IDialogService dialogService, CsvImportService csvImportService)
         {
@@ -131,49 +116,112 @@ namespace GymClient.ViewModels
             _dialogService = dialogService;
             _csvImportService = csvImportService;
 
+            SaveCommand = new RelayCommand(async () =>
+            {
+                if (!IsValid)
+                {
+                    await _dialogService.ShowMessage("Заполните все обязательные поля!");
+                    return;
+                }
+
+                if (IsEditMode)
+                    await UpdateMember();
+                else
+                    await AddMember();
+            });
+
             OpenMemberViewCommand = new RelayCommand(OpenAddMemberView);
-            AddMemberCommand = new RelayCommand(async () => await AddMember());
-
             EditMemberCommand = new RelayCommand(async () => await OpenEditMember());
-
             DeleteMemberCommand = new RelayCommand(async () => await DeleteMember());
-
             ImportCsvCommand = new RelayCommand(async () =>
             {
                 await _csvImportService.ImportMembersFromDialog();
-                InitializeAsync();
+                await LoadMembers();
             });
 
-            InitializeAsync();
-        }
-
-        public async void InitializeAsync()
-        {
-            await LoadMembers();
-        }
-
-        private void ApplyFilters()
-        {
-            List<Member> filtered;
-            if (string.IsNullOrWhiteSpace(SearchText))
-                filtered = _allMembers.ToList();
-            else
+            MembersSource.CollectionChanged += (_, __) =>
             {
-                string lower = SearchText.ToLower();
-                filtered = _allMembers.Where(m =>
-                    (m.FirstName != null && m.FirstName.ToLower().Contains(lower)) ||
-                    (m.LastName != null && m.LastName.ToLower().Contains(lower)) ||
-                    (m.Email != null && m.Email.ToLower().Contains(lower)) ||
-                    (m.PhoneNumber != null && m.PhoneNumber.ToLower().Contains(lower))
-                ).ToList();
+                OnPropertyChanged(nameof(HasData));
+                OnPropertyChanged(nameof(HasNoData));
+            };
+
+            _ = LoadMembers();
+        }
+
+        #region CRUD
+
+        private async Task AddMember()
+        {
+            if (!DateOfBirth.HasValue)
+            {
+                await _dialogService.ShowMessage("Укажите дату рождения!");
+                return;
             }
 
-            MembersSource.Clear();
-            foreach (var m in filtered)
-                MembersSource.Add(m);
+            var member = Member.Create(
+                FirstName,
+                LastName,
+                DateOnly.FromDateTime(DateOfBirth.Value),
+                PhoneNumber,
+                Email
+            );
 
-            OnPropertyChanged(nameof(HasData));
-            OnPropertyChanged(nameof(HasNoData));
+            var response = await _apiClient.Post(member);
+
+            if (response.IsSuccess && response.Data != null)
+            {
+                _allMembers.Add(response.Data);
+                MembersSource.Add(response.Data);
+
+                RequestClose?.Invoke();
+                await _dialogService.ShowMessage("Клиент добавлен!");
+            }
+            else
+            {
+                await _dialogService.ShowMessage("Ошибка при добавлении клиента");
+            }
+        }
+
+        private async Task UpdateMember()
+        {
+            if (!DateOfBirth.HasValue)
+            {
+                await _dialogService.ShowMessage("Укажите дату рождения!");
+                return;
+            }
+
+            var member = Member.Create(
+                FirstName,
+                LastName,
+                DateOnly.FromDateTime(DateOfBirth.Value),
+                PhoneNumber,
+                Email
+            );
+
+            member.Id = Id;
+
+            var response = await _apiClient.Update(member);
+
+            if (response.IsSuccess)
+            {
+                var existing = _allMembers.FirstOrDefault(m => m.Id == member.Id);
+                if (existing != null)
+                {
+                    int index = _allMembers.IndexOf(existing);
+                    _allMembers[index] = member;
+
+                    int idx2 = MembersSource.IndexOf(existing);
+                    if (idx2 >= 0)
+                        MembersSource[idx2] = member;
+                }
+
+                RequestClose?.Invoke();
+                await _dialogService.ShowMessage("Данные обновлены!");
+            }
+            else
+            {
+                await _dialogService.ShowMessage("Ошибка при обновлении клиента");
+            }
         }
 
         private async Task DeleteMember()
@@ -181,7 +229,8 @@ namespace GymClient.ViewModels
             if (SelectedMember == null) return;
 
             bool confirm = await _dialogService.ShowConfirmation(
-                $"Удалить {SelectedMember.FirstName} {SelectedMember.LastName} клиента?");
+                $"Удалить {SelectedMember.FirstName} {SelectedMember.LastName}?");
+
             if (!confirm) return;
 
             var response = await _apiClient.Delete(SelectedMember);
@@ -189,84 +238,94 @@ namespace GymClient.ViewModels
             if (response.IsSuccess)
             {
                 _allMembers.Remove(SelectedMember);
-                ApplyFilters();
+                MembersSource.Remove(SelectedMember);
             }
             else
             {
-                await _dialogService.ShowMessage($"Ошибка!");
+                await _dialogService.ShowMessage("Ошибка при удалении клиента");
             }
         }
 
         private async Task OpenEditMember()
         {
-            IsEditMode = true;
-
             if (SelectedMember == null) return;
 
-            var editableMember = SelectedMember.Clone();
+            Id = SelectedMember.Id;
+            FirstName = SelectedMember.FirstName;
+            LastName = SelectedMember.LastName;
+            Email = SelectedMember.Email;
+            PhoneNumber = SelectedMember.PhoneNumber;
+            DateOfBirth = SelectedMember.DateOfBirth.ToDateTime(new TimeOnly(0, 0));
+            IsEditMode = true;
 
-            var editView = new AddMemberView
-            {
-                DataContext = editableMember,
-                Owner = System.Windows.Application.Current.MainWindow
-            };
-
-            bool? result = editView.ShowDialog();
-
-            if (result == true)
-            {
-                await _apiClient.Update((Member)editableMember);
-                await _dialogService.ShowMessage($"Данные обновлены!");
-                InitializeAsync();
-            }
-        }
-
-        private void OpenAddMemberView()
-        {
-            IsEditMode = false;
-
-            var addMemberWindow = new AddMemberView
+            var view = new Views.AddMemberView
             {
                 DataContext = this,
                 Owner = System.Windows.Application.Current.MainWindow
             };
-            addMemberWindow.ShowDialog();
+
+            RequestClose += () => view.Close();
+            view.ShowDialog();
+
+            OnPropertyChanged(nameof(MembersSource));
         }
+
+        private void OpenAddMemberView()
+        {
+            Id = 0;
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            Email = string.Empty;
+            PhoneNumber = string.Empty;
+            DateOfBirth = null;
+            IsEditMode = false;
+
+            var view = new Views.AddMemberView
+            {
+                DataContext = this,
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+
+            RequestClose += () => view.Close();
+            view.ShowDialog();
+        }
+        public async void InitializeAsync() 
+        { 
+            await LoadMembers(); 
+        }
+        private void LoadSelectedMember()
+        {
+            if (SelectedMember == null) return;
+
+            Id = SelectedMember.Id;
+            FirstName = SelectedMember.FirstName;
+            LastName = SelectedMember.LastName;
+            Email = SelectedMember.Email;
+            PhoneNumber = SelectedMember.PhoneNumber;
+            DateOfBirth = SelectedMember.DateOfBirth.ToDateTime(new TimeOnly(0, 0));
+        }
+
+        #endregion
+
+        #region Helpers
 
         private async Task LoadMembers()
         {
             var result = await _apiClient.GetAll<Member>("api/members");
+
             if (result.Data == null)
             {
-                await _dialogService.ShowMessage($"Не удалось загрузить данные: {result.ErrorMessage}");
+                await _dialogService.ShowMessage("Не удалось загрузить список клиентов");
                 return;
             }
 
             _allMembers = new ObservableCollection<Member>(result.Data);
-            ApplyFilters();
+
+            MembersSource.Clear();
+            foreach (var m in _allMembers)
+                MembersSource.Add(m);
         }
 
-        private async Task AddMember()
-        {
-            var newMember = Member.Create(
-                FirstName,
-                LastName,
-                DateOfBirth,
-                PhoneNumber,
-                Email
-            );
-
-            var response = await _apiClient.Post(newMember);
-            if (response.IsSuccess && response.Data != null)
-            {
-                _allMembers.Add(response.Data);
-                await _dialogService.ShowMessage("Клиент добавлен!");
-                ApplyFilters();
-            }
-            else
-            {
-                await _dialogService.ShowMessage($"Ошибка!");
-            }
-        }
+        #endregion
     }
 }
